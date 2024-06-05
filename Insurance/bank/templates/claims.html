@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block content %}
+    <div class="content-section">
+        <h2>Insurance Claims</h2>
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Claim ID</th>
+                    <th>Policy Number</th>
+                    <th>Claim Date</th>
+                    <th>Amount</th>
+                    <th>Status</th>
+                    <th>Description</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for claim in claims %}
+                    <tr>
+                        <td>{{ claim.claim_id }}</td>
+                        <td>{{ claim.policy_number }}</td>
+                        <td>{{ claim.claim_date }}</td>
+                        <td>{{ claim.amount }}</td>
+                        <td>{{ claim.status }}</td>
+                        <td>{{ claim.description }}</td>
+                        <td>
+                            {% if claim.status == 'Pending' %}
+                                <a href="{{ url_for('process_claim', claim_id=claim.claim_id) }}">Process</a>
+                            {% else %}
+                                Processed
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock content %}

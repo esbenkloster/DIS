@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Your Insurance Web App{% endblock %}</title>
+    <!-- Add your CSS links here -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/main.css') }}">
+    <!-- Add your custom JavaScript links here -->
+    <script src="{{ url_for('static', filename='scripts/main.js') }}"></script>
+</head>
+<body>
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{{ url_for('index') }}">Home</a></li>
+                <li><a href="{{ url_for('login') }}">Login</a></li>
+                <!-- Add more navigation links as needed -->
+            </ul>
+        </nav>
+    </header>
+    
+    <main>
+        {% block content %}
+        <!-- This block will be replaced by content from child templates -->
+        {% endblock %}
+    </main>
+    
+    <footer>
+        <!-- Add your footer content here -->
+        <p>&copy; 2024 Your Insurance Company. All rights reserved.</p>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+
+{% block title %}Home - Your Insurance Web App{% endblock %}
+
+{% block content %}
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Welcome to Your Insurance Web App</h1>
+            <p>Manage your insurance policies and claims conveniently online.</p>
+            <a href="{{ url_for('login') }}" class="btn">Login</a>
+            <a href="{{ url_for('register') }}" class="btn">Register</a>
+        </div>
+    </section>
+
+    <section class="features">
+        <h2>Features</h2>
+        <ul>
+            <li>View and manage insurance policies</li>
+            <li>Submit and track insurance claims</li>
+    </section>
+{% endblock %}
