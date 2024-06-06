@@ -37,6 +37,6 @@ def view_claims():
     if not mysession["role"] == roles[iEmployee]:
         flash('Claim view is for employees only.', 'danger')
         return redirect(url_for('Login.login'))
-
-    claims = select_Policy_Claims()
+    
+    claims = select_Policy_Claims(policy_number=None)
     return render_template('claims.html', title='Claims', claims=claims)

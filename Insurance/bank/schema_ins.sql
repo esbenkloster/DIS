@@ -35,9 +35,9 @@ INSERT INTO Customers (CPR_number, policy_number, password, name, address, phone
 \echo .
 \echo Adding data to Employees:
 INSERT INTO Employees (id, name, password, department) VALUES
-(1, 'Robert Brown', 'admin123', 'Claims'),
-(2, 'Emily Davis', 'admin456', 'Underwriting'),
-(3, 'Michael Wilson', 'admin789', 'Customer Service');
+(601, 'Robert Brown', 'admin123', 'Claims'),
+(602, 'Emily Davis', 'admin456', 'Underwriting'),
+(603, 'Michael Wilson', 'admin789', 'Customer Service');
 
 \echo .
 \echo Adding data to Policies:
