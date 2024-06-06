@@ -1,16 +1,36 @@
 {% extends "layout.html" %}
+
 {% block content %}
+<div class="text-center">
     <h1>{{ current_user.name }}</h1>
-    {% for post in posts %}
-        <article class="media content-section">
-          <div class="media-body">
-            <div class="article-metadata">
-              <a class="mr-2" href="#">{{ post.author }}</a>
-              <small class="text-muted">{{ post.date_posted }}</small>
-            </div>
-            <h2><a class="article-title" href="#">{{ post.title }}</a></h2>
-            <p class="article-content">{{ post.content }}</p>
-          </div>
-        </article>
-    {% endfor %}
+</div>
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="content-section text-center">
+            <h3>Account</h3>
+            <ul class="list-group">
+                {% if current_user.is_authenticated %}
+                {% if role == 'customer' %}
+                <p>Insurance Dis-customer</p>
+                <li class="list-group-item list-group-item-light">Accounts</li>
+                <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View policies</a></li>
+                <li class="list-group-item list-group-item-light">Profile</li>
+                <li class="list-group-item list-group-item-light">History</li>
+                <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Create Claim</a></li>
+                {% elif role == 'employee' %}
+                <p>Insurance DIS - Employer</p>
+                <li class="list-group-item list-group-item-light">Accounts</li>
+                <li class="list-group-item list-group-item-light">Profile</li>
+                <li class="list-group-item list-group-item-light">Checking Accounts</li>
+                <li class="list-group-item list-group-item-light">Policy</li>
+                <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Employee.view_claims') }}">View claims</a></li>
+                {% endif %}
+                <li class="list-group-item list-group-item-light">etc</li>
+                {% else %}
+                <li class="list-group-item list-group-item-light">etc</li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</div>
 {% endblock content %}

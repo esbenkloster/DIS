@@ -10,6 +10,7 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
+
     {% if title %}
         <title>UIS Prototype - {{ title }}</title>
     {% else %}
@@ -18,9 +19,9 @@
 </head>
 <body>
     <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+      <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/">UIS Prototype</a>
+          <a class="navbar-brand mr-4" href="/">Insurrance Dis</a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -30,15 +31,12 @@
               <!-- Dropdown top right -->
               {% if current_user.is_authenticated %}
                 <li class="dropdown">
-                 <a href="#" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">UIS bank<b class="caret"></b></a>
+                 <a href="#" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">Insurrance DIS<b class="caret"></b></a>
                  <ul class="dropdown-menu">
-                    <li><a class="nav-item nav-link" href="{{ url_for('Login.account') }}">Account</a></li>
-                    <li><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Transfer</a></li>
+                    <li><a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Account</a></li>
+                    <li><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Claims</a></li>
                     <li class="divider"></li>
-                    <li><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Investments</a></li>
-                    <li class="divider"></li>
-                    <li><a class="nav-item nav-link" href="https://www.pgadmin.org">site pgAdmin</a></li>
-                    <li><a class="nav-item nav-link" href="http://127.0.0.1:58653/browser/ ">pgAdmin4</a></li>
+                    <li><a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View policies</a></li>
                  </ul>
                </li>
               {% else %}
@@ -48,13 +46,13 @@
             <!-- Navbar Right Side -->
             <div class="navbar-nav">
               {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="{{ url_for('Login.account') }}">Account</a>
+                <a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Account</a>
 			          {% if "customer" == role %}
-                <a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Transfer</a>
-                <a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">Investments</a>
+                <a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Claims</a>
+                <a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View Policies</a>
  			          {% endif %}
 		            {% if role == 'employee' %}
-                <a class="nav-item nav-link" href="{{ url_for('Employee.view_claims') }}">Add customer</a>
+                <a class="nav-item nav-link" href="{{ url_for('Employee.view_claims') }}">Insurrance claims</a>
 
  			          {% endif %}
 
@@ -68,6 +66,8 @@
       </nav>
     </header>
     <main role="main" class="container">
+
+      
       <div class="row">
         <div class="col-md-8">
           {% with messages = get_flashed_messages(with_categories=true) %}
@@ -80,42 +80,6 @@
             {% endif %}
           {% endwith %}
           {% block content %}{% endblock %}
-        </div>
-        <!-- Right Side box-->
-        <div class="col-md-4">
-          <div class="content-section">
-            <h3>Account</h3>
-              <ul class="list-group">
-              {% if current_user.is_authenticated %}
-
-			   {% if "customer" == role %}
-			        <p>UIS Prototype-customer</p>
-                <li class="list-group-item list-group-item-light">Accounts</li>
-                <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View policies</a></li>
-                <li class="list-group-item list-group-item-light">Profile</li>
-                <li class="list-group-item list-group-item-light">History</li>
-                <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Create Claim</a></li>
- 			   {% endif %}
-
-
-			      {% if role == 'employee' %}
-			        <p>Insurrance_DIS - Employer</p>
-                <li class="list-group-item list-group-item-light">Accounts</li>
-                <li class="list-group-item list-group-item-light">Profile</li>
-                <li class="list-group-item list-group-item-light">Checking Accounts</li>
-                <li class="list-group-item list-group-item-light">Policy</li>
-                <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Employee.view_claims') }}">View claims</a></li>
- 			      {% endif %}
-
-
-               <li class="list-group-item list-group-item-light">etc</li>
-
-              {% else %}
-                <li class="list-group-item list-group-item-light">etc</li>
-              {% endif %}
-              </ul>
-            </p>
-          </div>
         </div>
       </div>
     </main>
