@@ -8,6 +8,7 @@ CREATE TABLE IF NOT EXISTS Customers(
     address text,
     phone_number varchar(15),
     email varchar(100)
+    CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$')
 );
 
 CREATE TABLE IF NOT EXISTS Employees(
@@ -51,3 +52,12 @@ CREATE TABLE IF NOT EXISTS Manages(
 
 -- -- Adding a regex constraint to ensure phone number follows a pattern
 -- ALTER TABLE Customers ADD CONSTRAINT phone_number_format CHECK (phone_number ~ '^\+\d{1,3}\s?\d{4,14}$');
+
+
+-- CREATE TRIGGER email_check BEFORE INSERT ON Customers
+-- FOR EACH ROW
+-- BEGIN
+--     IF NEW.email NOT REGEXP '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$' THEN
+--         SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'Invalid email format';
+--     END IF;
+-- END;
