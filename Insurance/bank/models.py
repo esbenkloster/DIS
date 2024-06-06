@@ -189,16 +189,10 @@ def update_Claim_Status(claim_number, status):
 def select_cus_accounts(cpr_number):
     cur = conn.cursor()
     sql = """
-    SELECT
-      e.name employee
-    , c.name customer
-    , cpr_number
-    , account_number
-    FROM manages m
-      NATURAL JOIN accounts
-      NATURAL JOIN customers c
-      LEFT OUTER JOIN employees e ON m.emp_cpr_number = e.id
-	WHERE cpr_number = %s
+    SELECT * FROM accounts
+    NATURAL JOIN customers c
+    LEFT OUTER JOIN employees e ON m.emp_cpr_number = e.id
+    WHERE cpr_number = %s
     ;
     """
     cur.execute(sql, (cpr_number,))
