@@ -158,13 +158,19 @@ def insert_Claim(policy_number, claim_date, amount, status='Pending'):
     conn.commit()
     cur.close()
 
-def select_Policy_Claims(policy_number):
+def select_Policy_Claims(policy_number=None):
     cur = conn.cursor()
-    sql = """
-    SELECT * FROM claims
-    WHERE policy_number = %s
-    """
-    cur.execute(sql, (policy_number,))
+    if policy_number:
+        sql = """
+        SELECT * FROM claims
+        WHERE policy_number = %s
+        """
+        cur.execute(sql, (policy_number,))
+    else:
+        sql = """
+        SELECT * FROM claims
+        """
+        cur.execute(sql)
     claims = [Claim(row) for row in cur.fetchall()]
     cur.close()
     return claims

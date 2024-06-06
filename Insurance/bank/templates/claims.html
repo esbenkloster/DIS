@@ -25,7 +25,7 @@
                         <td>{{ claim.description }}</td>
                         <td>
                             {% if claim.status == 'Pending' %}
-                                <a href="{{ url_for('process_claim', claim_id=claim.claim_id) }}">Process</a>
+                                <a href="{{ url_for('Employee.process_claim', claim_id=claim.claim_id, status=Approved) }}">Process</a>
                             {% else %}
                                 Processed
                             {% endif %}

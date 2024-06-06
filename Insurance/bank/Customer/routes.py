@@ -33,7 +33,7 @@ def claim():
         insert_Claim(policy_number, datetime.datetime.now(), amount, description)
         flash('Claim submitted successfully!', 'success')
         return redirect(url_for('Login.home'))
-    return render_template('claim.html', title='Submit Claim', form=form)
+    return render_template('claims.html', title='Submit Claim', form=form)
 
 @Customer.route("/policies", methods=['GET', 'POST'])
 def view_policies():
@@ -46,4 +46,4 @@ def view_policies():
         return redirect(url_for('Login.login'))
 
     policies = select_Customer_Policies(current_user.get_id())
-    return render_template('policies.html', title='My Policies', policies=policies)
+    return render_template('policy.html', title='My Policies', policies=policies)
