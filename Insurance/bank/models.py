@@ -1,27 +1,33 @@
 from datetime import datetime
 from bank import conn, login_manager
 from flask_login import UserMixin
-from psycopg2 import sql
+from psycopg2 import sql, Error
 
 @login_manager.user_loader
 def load_user(user_id):
-    cur = conn.cursor()
+    try:
+        cur = conn.cursor()
+        schema = 'customers'
+        id = 'cpr_number'
+        if str(user_id).startswith('60'):
+            schema = 'employees'
+            id = 'id'
 
-    schema = 'customers'
-    id = 'cpr_number'
-    if str(user_id).startswith('60'):
-        schema = 'employees'
-        id = 'id'
+        user_sql = sql.SQL("""
+        SELECT * FROM {}
+        WHERE {} = %s
+        """).format(sql.Identifier(schema),  sql.Identifier(id))
 
-    user_sql = sql.SQL("""
-    SELECT * FROM {}
-    WHERE {} = %s
-    """).format(sql.Identifier(schema),  sql.Identifier(id))
-
-    cur.execute(user_sql, (int(user_id),))
-    if cur.rowcount > 0:
-        return Employees(cur.fetchone()) if schema == 'employees' else Customers(cur.fetchone())
-    else:
+        cur.execute(user_sql, (int(user_id),))
+        if cur.rowcount > 0:
+            user_data = cur.fetchone()
+            cur.close()
+            return Employees(user_data) if schema == 'employees' else Customers(user_data)
+        else:
+            cur.close()
+            return None
+    except Error as e:
+        print(f"Database error: {e}")
         return None
 
 class Customers(tuple, UserMixin):
@@ -66,6 +72,14 @@ class Claim(tuple):
         self.amount = claim_data[3]
         self.status = claim_data[4]
         self.description = claim_data[5]
+
+class Payment(tuple):
+    def __init__(self, payment_data):
+        self.payment_id = payment_data[0]
+        self.policy_number = payment_data[1]
+        self.payment_date = payment_data[2]
+        self.amount = payment_data[3]
+        self.payment_method = payment_data[4]
 
 def insert_Customer(name, CPR_number, password, address, ):
     cur = conn.cursor()
@@ -187,21 +201,36 @@ def update_Claim_Status(claim_number, status):
     cur.close()
 
 def select_cus_accounts(cpr_number):
+    try:
+        cur = conn.cursor()
+        account_sql = """
+        SELECT
+          e.name employee
+        , c.name customer
+        , cpr_number
+        , account_number
+        FROM manages m
+          NATURAL JOIN accounts
+          NATURAL JOIN customers c
+          LEFT OUTER JOIN employees e ON m.emp_cpr_number = e.id
+        WHERE cpr_number = %s
+        ;
+        """
+        cur.execute(account_sql, (cpr_number,))
+        accounts = cur.fetchall()
+        cur.close()
+        return accounts
+    except Error as e:
+        print(f"Database error: {e}")
+        return []
+
+def select_Policy_Payments(policy_number):
     cur = conn.cursor()
     sql = """
-    SELECT
-      e.name employee
-    , c.name customer
-    , cpr_number
-    , account_number
-    FROM manages m
-      NATURAL JOIN accounts
-      NATURAL JOIN customers c
-      LEFT OUTER JOIN employees e ON m.emp_cpr_number = e.id
-	WHERE cpr_number = %s
-    ;
+    SELECT * FROM payments
+    WHERE policy_number = %s
     """
-    cur.execute(sql, (cpr_number,))
-    tuple_resultset = cur.fetchall()
+    cur.execute(sql, (policy_number,))
+    payments = [Payment(row) for row in cur.fetchall()]
     cur.close()
-    return tuple_resultset
+    return payments

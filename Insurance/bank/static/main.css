@@ -64,7 +64,7 @@ a.article-title:hover {
 .article-metadata {
     padding-bottom: 1px;
     margin-bottom: 4px;
-    border-bottom: 1px solid #e3e3e3
+    border-bottom: 1px solid #e3e3e3;
 }
 
 .article-metadata a:hover {
@@ -112,4 +112,48 @@ a.article-title:hover {
     border-radius: 5px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     margin: 0 auto;
+}
+
+.left-side-menu {
+    width: 300px;
+}
+
+.left-side-menu .list-group-item {
+    font-size: 1.1rem;
+}
+
+/* New styles for sidebar and main content area */
+/* Highlighted Changes */
+.sidebar {
+    background-color: #f8f9fa;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000;
+    padding-top: 20px;
+}
+
+.sidebar-sticky {
+    position: -webkit-sticky;
+    position: sticky;
+    top: 75px; /* Height of navbar */
+}
+
+.sidebar .nav-link {
+    font-weight: 500;
+    color: #333;
+}
+
+.sidebar .nav-link:hover {
+    color: #007bff;
+}
+
+.sidebar .nav-link.active {
+    color: #007bff;
+}
+
+.main-content {
+    margin-left: 250px; 
+    padding: 20px;
 }

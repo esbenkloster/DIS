@@ -1,10 +1,13 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session
 from bank import app, conn, bcrypt
 from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm, ForgotPasswordForm
 from flask_login import login_user, current_user, logout_user, login_required
-from bank.models import select_Employee
-from bank.models import Customers, select_Customer, select_customer_direct
-from bank.models import select_cus_accounts, select_customers_direct
+from bank.models import *
+
+## from bank.models import select_Employee
+## from bank.models import Customers, select_Customer, select_customer_direct
+## from bank.models import select_cus_accounts, select_customers_direct
+
 from bank import roles, mysession
 
 Login = Blueprint('Login', __name__)
@@ -133,6 +136,7 @@ def logout():
     mysession["state"] = "logout"
     print(mysession)
     logout_user()
+    session.clear()
     return redirect(url_for('Login.home'))
 
 @Login.route("/account")
@@ -143,6 +147,19 @@ def account():
     role = mysession["role"]
     print('role: ' + role)
 
-    accounts = select_cus_accounts(current_user.get_id())
-    print(accounts)
-    return render_template('account.html', title='Account', acc=accounts, role=role, current_page='account')
+    try:
+        customer_id = current_user.get_id()
+        customer = select_Customer(customer_id)
+        policies = select_Customer_Policies(customer_id)
+        claims = []
+        for policy in policies:
+            claims += select_Policy_Claims(policy.policy_number)
+        payments = []
+        for policy in policies:
+            payments += select_Policy_Payments(policy.policy_number)
+
+        return render_template('account.html', title='Account', customer=customer, policies=policies, claims=claims, payments=payments, role=role, current_page='account')
+    except Exception as e:
+        flash('An error occurred while fetching account information.', 'danger')
+        print(f"Error fetching account info: {e}")
+        return redirect(url_for('Login.home'))

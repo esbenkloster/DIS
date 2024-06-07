@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>DIS Insurance - {{ title }}</title>
+    {% else %}
+        <title>DIS Insurance</title>
+    {% endif %}
+</head>
+<body>
+    <header class="site-header">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
+        <div class="container">
+          <span class="navbar-brand mr-4">DIS Insurance</span>
+          <div class="nav-separator"></div>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarToggle">
+            <div class="navbar-nav mr-auto">
+              <!-- Home link for authenticated users -->
+              <a class="nav-item nav-link{% if current_page == 'home' %} active{% endif %}" href="{{ url_for('Login.home') }}">Home</a>
+              <a class="nav-item nav-link{% if current_page == 'account' %} active{% endif %}" href="{{ url_for('Login.account') }}">Account</a>
+            </div>
+            <div class="navbar-nav ml-auto">
+              <!-- Navbar links for authenticated users -->
+              {% if "customer" == role %}
+              <a class="nav-item nav-link{% if current_page == 'transfer' %} active{% endif %}" href="{{ url_for('Customer.claim') }}">Transfer</a>
+              <a class="nav-item nav-link{% if current_page == 'investments' %} active{% endif %}" href="{{ url_for('Customer.view_policies') }}">Investments</a>
+              {% endif %}
+              {% if role == 'employee' %}
+              <a class="nav-item nav-link{% if current_page == 'add_customer' %} active{% endif %}" href="{{ url_for('Employee.view_claims') }}">Add customer</a>
+              {% endif %}
+              <!-- Logout link -->
+              <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
+              <a class="nav-item nav-link" href="{{ url_for('Login.logout') }}">Logout</a>
+            </div>
+          </div>
+        </div>
+      </nav>
+    </header>
+    <main role="main" class="container">
+      <div class="row">
+        <!-- Left Side box-->
+        <div class="left-side-menu">
+          <div class="content-section">
+            <h3>Dashboard</h3>
+            <ul class="list-group">
+              <li class="list-group-item"><a class="nav-link" href="{{ url_for('Login.account') }}">Account</a></li>
+              <li class="list-group-item"><a class="nav-link" href="{{ url_for('Customer.claim') }}">Transfer</a></li>
+              <li class="list-group-item"><a class="nav-link" href="{{ url_for('Customer.view_policies') }}">Investments</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="col-md-6">
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              {% for category, message in messages %}
+                <div class="alert alert-{{ category }}">
+                  {{ message }}
+                </div>
+              {% endfor %}
+            {% endif %}
+          {% endwith %}
+          {% block content %}{% endblock %}
+        </div>
+        <!-- Right Side box-->
+      </div>
+    </main>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9Q+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>

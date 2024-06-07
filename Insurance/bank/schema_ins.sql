@@ -28,9 +28,9 @@ DELETE FROM customers;
 \echo
 \echo Adding data to Customers:
 INSERT INTO Customers (CPR_number, policy_number, password, name, address, phone_number, email) VALUES
-(1001, 'P123456', 'password123', 'John Doe', '123 Elm St', '+1 555 1234567', 'john.doe@example.com'),
-(1002, 'P123457', 'password456', 'Jane Smith', '456 Oak St', '+1 555 2345678', 'jane.smith@example.com'),
-(1004, 'P123459', 'password321', 'Sam Ericsen', '325 Asp St', '+1 555 9876543', 'sam.ericsen@example.com');
+(1001, 'P123456', 'password123', 'John Doe', '123 Elm St', '+1 555 1234567', 'john.doe@example.com', 1000.00),
+(1002, 'P123457', 'password456', 'Jane Smith', '456 Oak St', '+1 555 2345678', 'jane.smith@example.com', 2000.00),
+(1004, 'P123459', 'password321', 'Sam Ericsen', '325 Asp St', '+1 555 9876543', 'sam.ericsen@example.com', -500.00);
 
 -- wrong email format to check the regex constraint
 INSERT INTO Customers (CPR_number, policy_number, password, name, address, phone_number, email) VALUES
