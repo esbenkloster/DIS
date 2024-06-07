@@ -1,6 +1,6 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint
 from bank import app, conn, bcrypt
-from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm
+from bank.forms import CustomerLoginForm, EmployeeLoginForm, DirectCustomerLoginForm, ForgotPasswordForm
 from flask_login import login_user, current_user, logout_user, login_required
 from bank.models import select_Employee
 from bank.models import Customers, select_Customer, select_customer_direct
@@ -10,6 +10,19 @@ from bank import roles, mysession
 Login = Blueprint('Login', __name__)
 
 posts = [{}]
+
+@Login.route("/forgot_password", methods=['GET', 'POST'])
+def forgot_password():
+    form = ForgotPasswordForm()
+    if form.validate_on_submit():
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM customers WHERE email = %s", (form.email.data,))
+        customer = cursor.fetchone()
+        if customer:
+            flash('Thank you. A password reset link has been sent to your email.', 'success')
+        else:
+            flash('No account has been registered with that email.', 'danger')
+    return render_template('forgot_password.html', title='Forgot Password', form=form, current_page='forgot_password')
 
 
 @Login.route("/")
@@ -133,4 +146,3 @@ def account():
     accounts = select_cus_accounts(current_user.get_id())
     print(accounts)
     return render_template('account.html', title='Account', acc=accounts, role=role, current_page='account')
-

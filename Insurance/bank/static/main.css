@@ -1,7 +1,7 @@
 body {
     background: #fafafa;
     color: #333333;
-    margin-top: 5rem;
+    margin-top: 6rem;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -9,7 +9,9 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .bg-steel {
-    background-color: #5f788a;
+    background: linear-gradient(to bottom, #367ac7, #4e6b80);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3),
+                inset 0 -1px 0 rgba(0, 0, 0, 0.2);
 }
 
 .site-header .navbar-nav .nav-link {
@@ -85,4 +87,29 @@ a.article-title:hover {
 
 .account-heading {
     font-size: 2.5rem;
+}
+
+.nav-separator {
+    width: 1px;
+    background-color: #ddd;
+    margin: 0 10px;
+    height: 24px;
+}
+
+.full-height {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 60vh;
+    width: 80vh;
+}
+
+.login-box {
+    max-width: 600px;
+    width: 100%;
+    padding: 20px;
+    background-color: #fff;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 0 auto;
 }

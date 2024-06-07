@@ -20,16 +20,17 @@
     <header class="site-header">
       <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
-          <a class="navbar-brand mr-4" href="/">DIS Insurance</a>
+          <span class="navbar-brand mr-4">DIS Insurance</span>
+          <div class="nav-separator"></div>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
               {% if current_user.is_authenticated %}
-                <!-- Highlighted: Conditional Home link -->
+                <!-- Home link for authenticated users -->
                 <a class="nav-item nav-link{% if current_page == 'home' %} active{% endif %}" href="{{ url_for('Login.home') }}">Home</a>
-                <!-- Dropdown menu for authenticated users -->
+                <!-- Menu for authenticated users -->
                 <li class="dropdown">
                  <a href="#" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">DIS Insurance<b class="caret"></b></a>
                  <ul class="dropdown-menu">
@@ -42,31 +43,25 @@
                     <li><a class="nav-item nav-link" href="http://127.0.0.1:58653/browser/">pgAdmin4</a></li>
                  </ul>
                </li>
-                <!-- Highlighted: Conditional About link for authenticated users -->
                 <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
               {% else %}
-                <!-- Highlighted: Conditional About link for non-authenticated users -->
+                <a class="nav-item nav-link{% if current_page == 'login' %} active{% endif %}" href="{{ url_for('Login.login') }}">Login</a>
                 <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
               {% endif %}
             </div>
-            <div class="navbar-nav">
+            <div class="navbar-nav ml-auto">
                 {% if current_user.is_authenticated %}
-                    <!-- Highlighted: Conditional Account link -->
+                    <!-- Navbar links for authenticated users -->
                     <a class="nav-item nav-link{% if current_page == 'account' %} active{% endif %}" href="{{ url_for('Login.account') }}">Account</a>
                     {% if "customer" == role %}
-                    <!-- Highlighted: Conditional Transfer link for customers -->
                     <a class="nav-item nav-link{% if current_page == 'transfer' %} active{% endif %}" href="{{ url_for('Customer.claim') }}">Transfer</a>
-                    <!-- Highlighted: Conditional Investments link for customers -->
                     <a class="nav-item nav-link{% if current_page == 'investments' %} active{% endif %}" href="{{ url_for('Customer.view_policies') }}">Investments</a>
                     {% endif %}
                     {% if role == 'employee' %}
-                    <!-- Highlighted: Conditional Add Customer link for employees -->
                     <a class="nav-item nav-link{% if current_page == 'add_customer' %} active{% endif %}" href="{{ url_for('Employee.view_claims') }}">Add customer</a>
                     {% endif %}
-                    <!-- Highlighted: Logout link -->
+                    <!-- Logout link -->
                     <a class="nav-item nav-link" href="{{ url_for('Login.logout') }}">Logout</a>
-                {% else %}
-                    <a class="nav-item nav-link{% if current_page == 'login' %} {% endif %}" href="{{ url_for('Login.login') }}">Login</a>
                 {% endif %}
             </div>
           </div>
@@ -94,7 +89,7 @@
                 <h3>Account</h3>
                 <ul class="list-group">
                 {% if "customer" == role %}
-                    <p>UIS Prototype-customer</p>
+                    <p>DIS Insurance - Customer</p>
                     <li class="list-group-item list-group-item-light">Accounts</li>
                     <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View policies</a></li>
                     <li class="list-group-item list-group-item-light">Profile</li>
@@ -102,7 +97,7 @@
                     <li class="list-group-item list-group-item-light"><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Create Claim</a></li>
                 {% endif %}
                 {% if role == 'employee' %}
-                    <p>Insurance_DIS - Employer</p>
+                    <p>DIS Insurance - Employee</p>
                     <li class="list-group-item list-group-item-light">Accounts</li>
                     <li class="list-group-item list-group-item-light">Profile</li>
                     <li class="list-group-item list-group-item-light">Checking Accounts</li>
@@ -115,7 +110,6 @@
             </div>
         </div>
         {% endif %}
-        </div>
       </div>
     </main>
 
