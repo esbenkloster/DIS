@@ -22,7 +22,7 @@ class CustomerLoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class EmployeeLoginForm(FlaskForm):
-    id = IntegerField('ID', validators=[DataRequired()])
+    id = IntegerField('Employee ID', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')
