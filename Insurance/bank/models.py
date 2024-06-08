@@ -56,14 +56,20 @@ class Employees(tuple, UserMixin):
     def get_id(self):
         return self.id
 
-class Policy(tuple):
+class Policy:
     def __init__(self, policy_data):
-        self.policy_number = policy_data[0]
-        self.policy_type = policy_data[1]
-        self.start_date = policy_data[2]
-        self.end_date = policy_data[3]
-        self.premium_amount = policy_data[4]
-        self.CPR_number = policy_data[5]
+        if len(policy_data) == 6:
+            self.policy_number = policy_data[0]
+            self.policy_type = policy_data[1]
+            self.start_date = policy_data[2]
+            self.end_date = policy_data[3]
+            self.premium_amount = policy_data[4]
+            self.CPR_number = policy_data[5]
+        elif len(policy_data) == 2:
+            self.policy_type = policy_data[0]
+            self.premium_amount = policy_data[1]
+        else:
+            raise ValueError("Invalid policy data")
 
 class Claim(tuple):
     def __init__(self, claim_data):
@@ -155,13 +161,15 @@ def insert_Policy(CPR_number, policy_type, premium, coverage, created_date=datet
 def select_Customer_Policies(CPR_number):
     cur = conn.cursor()
     sql = """
-    SELECT * FROM policies
+    SELECT policy_number, policy_type, start_date, end_date, premium_amount, CPR_number
+    FROM policies
     WHERE CPR_number = %s
     """
     cur.execute(sql, (CPR_number,))
     policies = [Policy(row) for row in cur.fetchall()]
     cur.close()
     return policies
+
 
 def insert_Claim(policy_number, claim_date, amount, status='Pending'):
     cur = conn.cursor()
@@ -235,3 +243,53 @@ def select_Policy_Payments(policy_number):
     payments = [Payment(row) for row in cur.fetchall()]
     cur.close()
     return payments
+
+class Policy:
+    def __init__(self, policy_data):
+        self.policy_number = policy_data[0]
+        self.policy_type = policy_data[1]
+        self.start_date = policy_data[2]
+        self.end_date = policy_data[3]
+        self.premium_amount = policy_data[4]
+        self.CPR_number = policy_data[5]
+
+def select_All_Policy_Types():
+    cur = conn.cursor()
+    sql = """
+    SELECT DISTINCT policy_type, premium_amount
+    FROM Policies
+    """
+    cur.execute(sql)
+    policies = [Policy(row) for row in cur.fetchall()]
+    cur.close()
+    return policies
+
+def select_Policy_Details_By_Type(policy_type):
+    cur = conn.cursor()
+    sql = """
+    SELECT policy_type, premium_amount
+    FROM Policies
+    WHERE policy_type = %s
+    LIMIT 1
+    """
+    cur.execute(sql, (policy_type,))
+    policy = Policy(cur.fetchone())
+    cur.close()
+    return policy
+
+def select_available_policies(CPR_number):
+    cur = conn.cursor()
+    sql = """
+    SELECT DISTINCT policy_type, premium_amount
+    FROM policies
+    WHERE CPR_number != %s
+    AND policy_type NOT IN (
+        SELECT policy_type
+        FROM policies
+        WHERE CPR_number = %s
+    )
+    """
+    cur.execute(sql, (CPR_number, CPR_number))
+    available_policies = [row for row in cur.fetchall()]
+    cur.close()
+    return available_policies

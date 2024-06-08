@@ -34,51 +34,68 @@ def index():
         return redirect(url_for('Login.home'))
     return redirect(url_for('Login.login'))
 
-@Login.route("/home")
+@Login.route('/home')
 @login_required
 def home():
-    mysession["state"] = "home"
-    print(mysession)
-    role = mysession["role"]
-    print('role: ' + role)
-    return render_template('home.html', posts=posts, role=role, current_page='home')
+    if not current_user.is_authenticated:
+        flash('Please login.', 'danger')
+        return redirect(url_for('Login.login'))
 
-@Login.route("/login", methods=['GET', 'POST'])
-def login():
-    mysession["state"] = "login"
-    print(mysession)
-    role = None
+    try:
+        customer_id = current_user.get_id()
+        customer = select_Customer(customer_id)
+        policies = select_Customer_Policies(customer_id)
+        recent_claims = []
+        recent_payments = []
 
-    if current_user.is_authenticated:
+        # Fetch recent claims
+        for policy in policies:
+            recent_claims += select_Policy_Claims(policy.policy_number)
+        recent_claims = sorted(recent_claims, key=lambda x: x.claim_date, reverse=True)[:5]
+
+        # Fetch recent payments
+        for policy in policies:
+            recent_payments += select_Policy_Payments(policy.policy_number)
+        recent_payments = sorted(recent_payments, key=lambda x: x.payment_date, reverse=True)[:5]
+
+        # Fetch active policies
+        active_policies = [policy for policy in policies if policy.end_date > datetime.now().date()]
+
+        return render_template('home.html', title='Home', customer=customer, recent_claims=recent_claims, recent_payments=recent_payments, active_policies=active_policies, current_page='home')
+    except Exception as e:
+        flash('An error occurred while fetching home page information.', 'danger')
+        print(f"Error fetching home page info: {e}")
         return redirect(url_for('Login.home'))
 
-    is_employee = True if request.args.get('is_employee') == 'true' else False
-    form = EmployeeLoginForm() if is_employee else CustomerLoginForm()
 
-    if form.validate_on_submit():
-        user = select_Employee(form.id.data) if is_employee else select_Customer(form.id.data)
+@Login.route("/account")
+@login_required
+def account():
+    mysession["state"] = "account"
+    print(mysession)
+    role = mysession.get("role", "Not assigned")
+    print('role: ' + role)
 
-        if user is not None and user[2] == form.password.data:
-            print("role:" + user.role)
-            if user.role == 'employee':
-                mysession["role"] = roles[1]  # employee
-            elif user.role == 'customer':
-                mysession["role"] = roles[2]  # customer
-            else:
-                mysession["role"] = roles[0]  # ingen
+    try:
+        customer_id = current_user.get_id()
+        customer = select_Customer(customer_id)
+        policies = select_Customer_Policies(customer_id)
+        print('balance: ' + str(customer.balance)) 
+        claims = []
+        for policy in policies:
+            claims += select_Policy_Claims(policy.policy_number)
+        payments = []
+        for policy in policies:
+            payments += select_Policy_Payments(policy.policy_number)
 
-            mysession["id"] = form.id.data
-            print(mysession)
-            print(roles)
+        return render_template('account.html', title='Account', customer=customer, policies=policies, claims=claims, payments=payments, role=role, current_page='account')
+    except Exception as e:
+        flash('An error occurred while fetching account information.', 'danger')
+        print(f"Error fetching account info: {e}")
+        return redirect(url_for('Login.home'))
 
-            login_user(user, remember=form.remember.data)
-            flash('Login successful.', 'success')
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('Login.home'))
-        else:
-            flash('Login Unsuccessful. Please check identifier and password', 'danger')
 
-    return render_template('login.html', title='Login', is_employee=is_employee, form=form, role=role, current_page='login')
+
 
 @Login.route("/about")
 def about():
@@ -131,6 +148,46 @@ def direct():
     return render_template('direct.html', title='Direct Login', is_employee=is_employee, form=form,
                            students=students, radio_direct=direct_users, role=role, current_page='direct')
 
+@Login.route("/login", methods=['GET', 'POST'])
+def login():
+    session["state"] = "login"
+    print(session)
+    role = None
+
+    if current_user.is_authenticated:
+        return redirect(url_for('Login.home'))
+
+    is_employee = True if request.args.get('is_employee') == 'true' else False
+    form = EmployeeLoginForm() if is_employee else CustomerLoginForm()
+
+    if form.validate_on_submit():
+        user = select_Employee(form.id.data) if is_employee else select_Customer(form.id.data)
+
+        if user is not None and user[2] == form.password.data:
+            print("role:" + user.role)
+            if user.role == 'employee':
+                session["role"] = roles[1]  # employee
+            elif user.role == 'customer':
+                session["role"] = roles[2]  # customer
+            else:
+                session["role"] = roles[0]  # ingen
+
+            session["id"] = form.id.data
+            session["state"] = "account"  # Set state to account after successful login
+            print(session)
+            print(roles)
+
+            login_user(user, remember=form.remember.data)
+            flash('Login successful.', 'success')
+            next_page = request.args.get('next')
+            return redirect(next_page) if next_page else redirect(url_for('Login.home'))
+        else:
+            flash('Login Unsuccessful. Please check identifier and password', 'danger')
+
+    return render_template('login.html', title='Login', is_employee=is_employee, form=form, role=role, current_page='login')
+
+
+
 @Login.route("/logout")
 def logout():
     mysession["state"] = "logout"
@@ -138,29 +195,3 @@ def logout():
     logout_user()
     session.clear()
     return redirect(url_for('Login.home'))
-
-@Login.route("/account")
-@login_required
-def account():
-    mysession["state"] = "account"
-    print(mysession)
-    role = mysession["role"]
-    print('role: ' + role)
-
-    try:
-        customer_id = current_user.get_id()
-        customer = select_Customer(customer_id)
-        policies = select_Customer_Policies(customer_id)
-        print('balance: ' + str(customer.balance))  # Convert balance to string
-        claims = []
-        for policy in policies:
-            claims += select_Policy_Claims(policy.policy_number)
-        payments = []
-        for policy in policies:
-            payments += select_Policy_Payments(policy.policy_number)
-
-        return render_template('account.html', title='Account', customer=customer, policies=policies, claims=claims, payments=payments, role=role, current_page='account')
-    except Exception as e:
-        flash('An error occurred while fetching account information.', 'danger')
-        print(f"Error fetching account info: {e}")
-        return redirect(url_for('Login.home'))

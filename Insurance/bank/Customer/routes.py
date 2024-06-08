@@ -3,9 +3,7 @@ from bank import app, conn, bcrypt
 from bank.forms import PaymentForm, ClaimForm
 from flask_login import current_user, login_required
 from bank.models import *
-
 import datetime
-
 from bank import roles, mysession
 
 iEmployee = 1
@@ -32,7 +30,7 @@ def claims():
         flash('An error occurred while fetching claims information.', 'danger')
         print(f"Error fetching claims info: {e}")
         return redirect(url_for('Login.home'))
-
+    
 @Customer.route('/file_claim', methods=['GET', 'POST'])
 @login_required
 def file_claim():
@@ -57,9 +55,6 @@ def file_claim():
     policies = select_Customer_Policies(current_user.get_id())
     return render_template('file_claim.html', title='File New Claim', policies=policies, current_page='claims')
 
-
-
-
 @Customer.route('/payments')
 @login_required
 def payments():
@@ -80,38 +75,54 @@ def payments():
         print(f"Error fetching payments info: {e}")
         return redirect(url_for('Login.home'))
 
-@Customer.route('/policies')
+
+@Customer.route("/policies", methods=['GET', 'POST'])
 @login_required
 def view_policies():
+    mysession["state"] = "policies"
+    print(f"Session state: {mysession}")
+
     try:
         customer_id = current_user.get_id()
+        print(f"Customer ID: {customer_id}")
         policies = select_Customer_Policies(customer_id)
-        return render_template('policies.html', title='My Policies', policies=policies, current_page='policies')
+        print(f"Policies: {policies}")
+        available_policies = select_available_policies(customer_id)
+        print(f"Available Policies: {available_policies}")
+        return render_template('policies.html', title='My Policies', policies=policies, available_policies=available_policies, current_page='policies')
     except Exception as e:
         flash('An error occurred while fetching policies information.', 'danger')
         print(f"Error fetching policies info: {e}")
         return redirect(url_for('Login.home'))
 
 
+
+
 @Customer.route('/account')
 @login_required
 def account():
-    if not current_user.is_authenticated:
-        flash('Please login.', 'danger')
-        return redirect(url_for('Login.login'))
+    session["state"] = "account"
+    print(f"Session state: {session}")
+    role = session.get("role", "Not assigned")
+    print(f"Role: {role}")
 
-    print(f"Session state: {mysession}")
-    if not mysession["role"] == roles[iCustomer]:
+    if role != roles[2]:  # Check if role is customer
         flash('Account view is for customers only.', 'danger')
         return redirect(url_for('Login.login'))
 
-    customer = select_Customer(current_user.get_id())
-    policies = select_Customer_Policies(current_user.get_id())
-    claims = select_Policy_Claims()
-    payments = select_Policy_Payments()
+    try:
+        customer_id = current_user.get_id()
+        customer = select_Customer(customer_id)
+        policies = select_Customer_Policies(customer_id)
+        claims = select_Policy_Claims()
+        payments = select_Policy_Payments()
 
-    print(f"Customer Info: {customer}")
-    return render_template('account.html', title='My Account', customer=customer, policies=policies, claims=claims, payments=payments)
+        print(f"Customer Info: {customer}")
+        return render_template('account.html', title='My Account', customer=customer, policies=policies, claims=claims, payments=payments)
+    except Exception as e:
+        flash('An error occurred while fetching account information.', 'danger')
+        print(f"Error fetching account info: {e}")
+        return redirect(url_for('Login.home'))
 
 
 @Customer.route('/update_details', methods=['POST'])
@@ -129,7 +140,7 @@ def update_details():
             email = %s
         WHERE CPR_number = %s
         """
-        
+
         cur.execute(update_sql, (request.form['address'], request.form['phone_number'], request.form['email'], current_user.CPR_number))
         conn.commit()
         cur.close()
@@ -141,4 +152,27 @@ def update_details():
 
     return redirect(url_for('Customer.account'))
 
+@Customer.route('/purchase_policy/<policy_type>', methods=['GET', 'POST'])
+@login_required
+def purchase_policy(policy_type):
+    if not current_user.is_authenticated:
+        flash('Please login.', 'danger')
+        return redirect(url_for('Login.login'))
 
+    if not mysession["role"] == roles[iCustomer]:
+        flash('Policy purchase is for customers only.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    try:
+        # Generate a new policy number
+        new_policy_number = 'P' + str(datetime.datetime.now().timestamp()).replace('.', '')
+
+        # Insert the new policy
+        insert_Policy(current_user.get_id(), policy_type, 1000, 5000)  # Assuming default premium and coverage values
+
+        flash(f'You have successfully purchased the {policy_type} policy.', 'success')
+        return redirect(url_for('Customer.view_policies'))
+    except Exception as e:
+        flash('An error occurred while purchasing the policy. Please try again.', 'danger')
+        print(f"Error purchasing policy: {e}")
+        return redirect(url_for('Customer.view_policies'))

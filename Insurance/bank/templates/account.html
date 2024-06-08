@@ -1,7 +1,6 @@
 {% extends "layout_logged_in.html" %}
-{% block page_title %}My Account{% endblock %}
+{% block page_title %}Account{% endblock %}
 {% block content %}
-<div class="content-section">
     <h3>Personal Details</h3>
     <form action="{{ url_for('Customer.update_details') }}" method="POST">
         <ul class="list-group">
@@ -15,89 +14,11 @@
             <li class="list-group-item">
                 Email: <input type="email" name="email" value="{{ customer.email }}" class="form-control">
             </li>
-            <li class="list-group-item">Balance: {{ customer.balance }}</li>
+            <li class="list-group-item">
+                Balance: <input type="text" name="balance" value="{{ customer.balance }}" class="form-control">
+            </li>
         </ul>
         <button type="submit" class="btn btn-primary mt-3">Update Details</button>
     </form>
-</div>
 
-<div class="content-section">
-    <h3>Policies</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Policy Number</th>
-                <th scope="col">Policy Type</th>
-                <th scope="col">Start Date</th>
-                <th scope="col">End Date</th>
-                <th scope="col">Premium Amount</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for policy in policies %}
-            <tr>
-                <th scope="row">{{ policy.policy_number }}</th>
-                <td>{{ policy.policy_type }}</td>
-                <td>{{ policy.start_date }}</td>
-                <td>{{ policy.end_date }}</td>
-                <td>{{ policy.premium_amount }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-<div class="content-section">
-    <h3>Claims</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Claim ID</th>
-                <th scope="col">Policy Number</th>
-                <th scope="col">Claim Date</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Status</th>
-                <th scope="col">Description</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for claim in claims %}
-            <tr>
-                <th scope="row">{{ claim.claim_id }}</th>
-                <td>{{ claim.policy_number }}</td>
-                <td>{{ claim.claim_date }}</td>
-                <td>{{ claim.amount }}</td>
-                <td>{{ claim.claim_status }}</td>
-                <td>{{ claim.description }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
-
-<div class="content-section">
-    <h3>Payments</h3>
-    <table class="table table-striped">
-        <thead>
-            <tr>
-                <th scope="col">Payment ID</th>
-                <th scope="col">Policy Number</th>
-                <th scope="col">Payment Date</th>
-                <th scope="col">Amount</th>
-                <th scope="col">Payment Method</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for payment in payments %}
-            <tr>
-                <th scope="row">{{ payment.payment_id }}</th>
-                <td>{{ payment.policy_number }}</td>
-                <td>{{ payment.payment_date }}</td>
-                <td>{{ payment.amount }}</td>
-                <td>{{ payment.payment_method }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-</div>
 {% endblock %}

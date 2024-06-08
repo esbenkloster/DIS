@@ -1,8 +1,8 @@
 {% extends "layout_logged_in.html" %}
-{% block page_title %}Manage Claims{% endblock %}
+{% block page_title %}Claims{% endblock %}
 {% block content %}
     <div class="d-flex justify-content-between align-items-center mb-3">
-        <h2>Insurance Claims</h2>
+        <h2>Overview</h2>
         <a href="{{ url_for('Customer.file_claim') }}" class="btn btn-primary">Submit New Claim</a>
     </div>
     <hr> <!-- Horizontal separator -->
