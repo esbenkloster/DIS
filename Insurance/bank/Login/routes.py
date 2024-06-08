@@ -151,6 +151,7 @@ def account():
         customer_id = current_user.get_id()
         customer = select_Customer(customer_id)
         policies = select_Customer_Policies(customer_id)
+        print('balance: ' + str(customer.balance))  # Convert balance to string
         claims = []
         for policy in policies:
             claims += select_Policy_Claims(policy.policy_number)

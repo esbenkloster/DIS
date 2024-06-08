@@ -39,6 +39,7 @@ class Customers(tuple, UserMixin):
         self.address = user_data[4]
         self.phone_number = user_data[5]
         self.email = user_data[6]
+        self.balance = user_data[7]
         self.role = "customer"
 
     def get_id(self):

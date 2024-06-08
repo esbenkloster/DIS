@@ -17,65 +17,46 @@
     {% endif %}
 </head>
 <body>
-    <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
-        <div class="container">
-          <span class="navbar-brand mr-4">DIS Insurance</span>
-          <div class="nav-separator"></div>
-          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle" aria-controls="navbarToggle" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-          </button>
-          <div class="collapse navbar-collapse" id="navbarToggle">
-            <div class="navbar-nav mr-auto">
-              <!-- Home link for authenticated users -->
-              <a class="nav-item nav-link{% if current_page == 'home' %} active{% endif %}" href="{{ url_for('Login.home') }}">Home</a>
-              <a class="nav-item nav-link{% if current_page == 'account' %} active{% endif %}" href="{{ url_for('Login.account') }}">Account</a>
-            </div>
-            <div class="navbar-nav ml-auto">
-              <!-- Navbar links for authenticated users -->
-              {% if "customer" == role %}
-              <a class="nav-item nav-link{% if current_page == 'transfer' %} active{% endif %}" href="{{ url_for('Customer.claim') }}">Transfer</a>
-              <a class="nav-item nav-link{% if current_page == 'investments' %} active{% endif %}" href="{{ url_for('Customer.view_policies') }}">Investments</a>
-              {% endif %}
-              {% if role == 'employee' %}
-              <a class="nav-item nav-link{% if current_page == 'add_customer' %} active{% endif %}" href="{{ url_for('Employee.view_claims') }}">Add customer</a>
-              {% endif %}
-              <!-- Logout link -->
-              <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
-              <a class="nav-item nav-link" href="{{ url_for('Login.logout') }}">Logout</a>
-            </div>
-          </div>
-        </div>
-      </nav>
-    </header>
-    <main role="main" class="container">
-      <div class="row">
-        <!-- Left Side box-->
-        <div class="left-side-menu">
-          <div class="content-section">
-            <h3>Dashboard</h3>
-            <ul class="list-group">
-              <li class="list-group-item"><a class="nav-link" href="{{ url_for('Login.account') }}">Account</a></li>
-              <li class="list-group-item"><a class="nav-link" href="{{ url_for('Customer.claim') }}">Transfer</a></li>
-              <li class="list-group-item"><a class="nav-link" href="{{ url_for('Customer.view_policies') }}">Investments</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="col-md-6">
-          {% with messages = get_flashed_messages(with_categories=true) %}
-            {% if messages %}
-              {% for category, message in messages %}
-                <div class="alert alert-{{ category }}">
-                  {{ message }}
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-10 main-content">
+                <div class="row">
+                    <!-- Left Side box-->
+                    <div class="col-md-3 left-side-menu sidebar">
+                        <h3 class="logo">DIS Insurance</h3>
+                        <ul class="list-group">
+                            <li class="list-group-item{% if current_page == 'home' %} active{% endif %}"><a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Home</a></li>
+                            <li class="list-group-item{% if current_page == 'account' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Login.account') }}">My Account</a></li>
+                            <li class="list-group-item{% if current_page == 'policies' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.view_policies') }}">Manage Policies</a></li>
+                            <li class="list-group-item{% if current_page == 'claims' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.claims') }}">Manage Claims</a></li>
+                            <li class="list-group-item{% if current_page == 'payments' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.payments') }}">View Payment History</a></li>
+                            <li class="list-group-item{% if current_page == 'about' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Login.about') }}">About Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="dashboard-header">
+                            <h3>Dashboard | {% block page_title %}{% endblock %}</h3>
+                        </div>
+                        <div class="content-section">
+                            {% block content %}{% endblock %}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <!-- Account Details Box -->
+                        <div class="account-details-box">
+                            <h4>Account Details</h4>
+                            <hr> <!-- Horizontal separator -->
+                            <p><strong>Email:</strong> john.doe@example.com</p>
+                            <p><strong>Name:</strong> John Doe</p>
+                            <p><strong>Address:</strong> 123 Elm St</p>
+                            <!-- Log Out button inside account details box -->
+                            <a href="{{ url_for('Login.logout') }}" class="btn btn-danger btn-logout">Log Out</a>
+                        </div>
+                    </div>
                 </div>
-              {% endfor %}
-            {% endif %}
-          {% endwith %}
-          {% block content %}{% endblock %}
+            </div>
         </div>
-        <!-- Right Side box-->
-      </div>
-    </main>
+    </div>
 
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->

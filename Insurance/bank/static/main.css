@@ -1,7 +1,11 @@
 body {
-    background: #fafafa;
+    background: linear-gradient(to bottom, #6fa2d9, #367ac7); /* Light to dark blue gradient */
     color: #333333;
-    margin-top: 6rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 h1, h2, h3, h4, h5, h6 {
@@ -40,6 +44,7 @@ h1, h2, h3, h4, h5, h6 {
     border: 1px solid #dddddd;
     border-radius: 3px;
     margin-bottom: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .article-title {
@@ -115,45 +120,87 @@ a.article-title:hover {
 }
 
 .left-side-menu {
-    width: 300px;
+    width: 100%;
+    background-color: #ffffff;
+    padding: 0;
+    padding-bottom: 50px;
 }
 
 .left-side-menu .list-group-item {
-    font-size: 1.1rem;
+    font-size: 1.2rem;
+    border-radius: 0;
+    background-color: transparent;
+    border: none;
+    border-bottom: 1.5px solid #e9ecef;
+    padding: 15px 40px;
 }
 
-/* New styles for sidebar and main content area */
-/* Highlighted Changes */
-.sidebar {
+.left-side-menu .list-group-item:hover {
     background-color: #f8f9fa;
-    height: 100vh;
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1000;
+}
+
+.left-side-menu .list-group-item.active {
+    background-color: #f8f9fa !important;
+    color: #333 !important; /* Ensure text color is visible */
+}
+
+.left-side-menu .list-group-item.active .nav-link {
+    background-color: #f8f9fa !important;
+    color: #333 !important; /* Ensure text color is visible */
+}
+
+.sidebar {
     padding-top: 20px;
+    height: 100vh;
 }
 
-.sidebar-sticky {
-    position: -webkit-sticky;
-    position: sticky;
-    top: 75px; /* Height of navbar */
-}
-
-.sidebar .nav-link {
-    font-weight: 500;
-    color: #333;
-}
-
-.sidebar .nav-link:hover {
-    color: #007bff;
-}
-
-.sidebar .nav-link.active {
-    color: #007bff;
+.logo {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 20px;
 }
 
 .main-content {
-    margin-left: 250px; 
+    background-color: #f8f9fa;
+    margin: 20px auto;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 20px;
     padding: 20px;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+.account-details-box {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.dashboard-header {
+    background-color: #ffffff;
+    padding: 15px 20px;
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.top-buttons {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.btn-secondary, .btn-danger {
+    border-radius: 10px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    padding: 10px 20px;
+    margin-right: 10px;
+}
+
+.btn-danger {
+    margin-right: 0;
 }
