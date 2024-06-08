@@ -164,12 +164,9 @@ def purchase_policy(policy_type):
         return redirect(url_for('Login.login'))
 
     try:
-        # Generate a new policy number
         new_policy_number = 'P' + str(datetime.datetime.now().timestamp()).replace('.', '')
 
-        # Insert the new policy
-        insert_Policy(current_user.get_id(), policy_type, 1000, 5000)  # Assuming default premium and coverage values
-
+        insert_Policy(current_user.get_id(), policy_type, 1000, 5000)  
         flash(f'You have successfully purchased the {policy_type} policy.', 'success')
         return redirect(url_for('Customer.view_policies'))
     except Exception as e:
