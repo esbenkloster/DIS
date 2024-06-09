@@ -3,7 +3,7 @@ from bank import app, conn, bcrypt
 from bank.forms import PaymentForm, ClaimForm
 from flask_login import current_user
 from bank.models import Policy, Claim, insert_Policy
-from bank.models import select_Customer_Policies, insert_Claim, select_Policy_Claims
+from bank.models import select_Customer_Policies, insert_Claim, select_Policy_Claims, select_cus_claims
 from bank.models import update_Claim_Status, select_cus_accounts
 
 import datetime
@@ -32,8 +32,10 @@ def claim():
         policy_number = request.args.get('policy_number')
         insert_Claim(policy_number, datetime.datetime.now(), amount, description)
         flash('Claim submitted successfully!', 'success')
-        return redirect(url_for('Login.home'))
-    return render_template('claims.html', title='Submit Claim', form=form)
+        return redirect(url_for('Customer.claim'))
+    
+    claims = select_cus_claims(current_user.get_id())  # Fetch the customer's claims
+    return render_template('claims.html', title='Submit Claim', form=form, claims=claims)
 
 @Customer.route("/policies", methods=['GET', 'POST'])
 def view_policies():

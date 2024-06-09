@@ -1,38 +1,44 @@
 {% extends "layout.html" %}
 {% block content %}
-    <div class="content-section">
-        <h2>Insurance Claims</h2>
-        <table class="table table-striped">
+    <h1>Submit Claim</h1>
+    <form method="POST">
+        {{ form.hidden_tag() }}
+        <div class="form-group">
+            {{ form.description.label(class="form-control-label") }}
+            {{ form.description(class="form-control form-control-lg") }}
+        </div>
+        <div class="form-group">
+            {{ form.amount.label(class="form-control-label") }}
+            {{ form.amount(class="form-control form-control-lg") }}
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+
+    <h2>Your Claims</h2>
+    {% if claims %}
+        <table class="table">
             <thead>
                 <tr>
-                    <th>Claim ID</th>
                     <th>Policy Number</th>
-                    <th>Claim Date</th>
-                    <th>Amount</th>
-                    <th>Status</th>
                     <th>Description</th>
-                    <th>Action</th>
+                    <th>Claim Amount</th>
+                    <th>Claim Date</th>
+                    <th>Claim Status</th>
                 </tr>
             </thead>
             <tbody>
                 {% for claim in claims %}
                     <tr>
-                        <td>{{ claim.claim_id }}</td>
-                        <td>{{ claim.policy_number }}</td>
-                        <td>{{ claim.claim_date }}</td>
-                        <td>{{ claim.amount }}</td>
-                        <td>{{ claim.status }}</td>
-                        <td>{{ claim.description }}</td>
-                        <td>
-                            {% if claim.status == 'Pending' %}
-                                <a href="{{ url_for('Employee.process_claim', claim_id=claim.claim_id, status=Approved) }}">Process</a>
-                            {% else %}
-                                Processed
-                            {% endif %}
-                        </td>
+                        <td>{{ claim[1] }}</td>
+                        <td>{{ claim[5] }}</td>
+                        <td>{{ claim[3] }}</td>
+                        <td>{{ claim[2] }}</td>
+                        <td>{{ claim[4] }}</td>
                     </tr>
                 {% endfor %}
             </tbody>
         </table>
-    </div>
-{% endblock content %}
+    {% else %}
+        <p>No claims found.</p>
+    {% endif %}
+{% endblock %}
