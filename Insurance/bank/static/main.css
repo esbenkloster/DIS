@@ -194,13 +194,38 @@ a.article-title:hover {
     align-items: center;
 }
 
-.btn-secondary, .btn-danger {
+.btn-primary, .btn-secondary, .btn-danger {
     border-radius: 10px;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     padding: 10px 20px;
     margin-right: 10px;
+    text-align: center;
+    transition: none;
+    width: 150px;
 }
 
-.btn-danger {
-    margin-right: 0;
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+    color: #fff;
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    border-color: #6c757d;
+    color: #fff;
+}
+
+.btn-primary:hover, .btn-primary:focus, .btn-secondary:hover, .btn-secondary:focus, .btn-danger:hover, .btn-danger:focus {
+    color: #fff;
+    text-decoration: none;
+}
+
+.btn-primary:active, .btn-secondary:active, .btn-danger:active {
+    box-shadow: none;
+}
+
+.btn-primary:focus, .btn-secondary:focus, .btn-danger:focus {
+    outline: none;
+    box-shadow: none;
 }
