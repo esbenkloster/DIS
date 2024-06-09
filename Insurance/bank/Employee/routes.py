@@ -39,4 +39,4 @@ def view_claims():
         return redirect(url_for('Login.login'))
     
     claims = select_Policy_Claims(policy_number=None)
-    return render_template('claims.html', title='Claims', claims=claims)
+    return render_template('claimEmp.html', title='Claims', claims=claims)

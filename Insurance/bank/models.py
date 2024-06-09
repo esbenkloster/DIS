@@ -62,11 +62,11 @@ class Claim(tuple):
     def __init__(self, claim_data):
         self.claim_id = claim_data[0]
         self.policy_number = claim_data[1]
-        self.claim_date = claim_data[2]
+        self.description = claim_data[2]
         self.amount = claim_data[3]
-        self.status = claim_data[4]
-        self.description = claim_data[5]
-
+        self.claim_date = claim_data[4]
+        self.status = claim_data[5]
+        
 def insert_Customer(name, CPR_number, password, address, ):
     cur = conn.cursor()
     sql = """
@@ -148,13 +148,41 @@ def select_Customer_Policies(CPR_number):
     cur.close()
     return policies
 
-def insert_Claim(policy_number, claim_date, amount, status='Pending'):
+def select_cus_claims(cpr_number):
+    cur = conn.cursor()
+    
+    # Fetch the policies associated with the customer
+    sql_policies = """
+    SELECT policy_number FROM policies
+    WHERE CPR_number = %s
+    """
+    cur.execute(sql_policies, (cpr_number,))
+    policy_numbers = [row[0] for row in cur.fetchall()]
+    
+    # If no policies are found, return an empty list
+    if not policy_numbers:
+        cur.close()
+        return []
+
+    # Fetch the claims associated with the policy numbers
+    sql_claims = """
+    SELECT * FROM claims
+    WHERE policy_number = ANY(%s)
+    """
+    cur.execute(sql_claims, (policy_numbers,))
+    claims = [Claim(row) for row in cur.fetchall()]
+    
+    cur.close()
+    return claims
+
+
+def insert_Claim(policy_number, claim_date, claim_amount, claim_status='Pending'):
     cur = conn.cursor()
     sql = """
-    INSERT INTO claims (policy_number, claim_date, amount, status)
+    INSERT INTO claims (policy_number, claim_date, claim_amount, claim_status)
     VALUES (%s, %s, %s, %s)
     """
-    cur.execute(sql, (policy_number, claim_date, amount, status))
+    cur.execute(sql, (policy_number, claim_date, claim_amount, claim_status))
     conn.commit()
     cur.close()
 
