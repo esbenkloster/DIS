@@ -1,0 +1,12 @@
+{% extends "layout_logged_in.html" %}
+{% block page_title %}Customer Details{% endblock %}
+{% block content %}
+<div class="content-section">
+    <h2>Customer Details</h2>
+    <p><strong>Name:</strong> {{ customer.name }}</p>
+    <p><strong>Email:</strong> {{ customer.email }}</p>
+    <p><strong>Address:</strong> {{ customer.address }}</p>
+    <p><strong>Phone Number:</strong> {{ customer.phone_number }}</p>
+    <p><strong>Balance:</strong> ${{ customer.balance }}</p>
+</div>
+{% endblock %}

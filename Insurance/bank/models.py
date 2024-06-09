@@ -293,3 +293,13 @@ def select_available_policies(CPR_number):
     available_policies = [row for row in cur.fetchall()]
     cur.close()
     return available_policies
+
+def select_Customers():
+    cur = conn.cursor()
+    sql = """
+    SELECT * FROM customers
+    """
+    cur.execute(sql)
+    customers = [Customers(row) for row in cur.fetchall()]
+    cur.close()
+    return customers
