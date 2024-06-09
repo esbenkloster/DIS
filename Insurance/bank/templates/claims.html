@@ -62,7 +62,7 @@
     </table>
 
     <!-- Closed Claims -->
-    <h3>Closed Claims</h3>
+    <h3>Denied Claims</h3>
     <table class="table table-striped">
         <thead>
             <tr>
@@ -75,7 +75,7 @@
             </tr>
         </thead>
         <tbody>
-            {%  for claim in claims if claim.status == 'Closed' %}
+            {%  for claim in claims if claim.status == 'Denied' %}
                 <tr>
                     <td>{{ claim.claim_id }}</td>
                     <td>{{ claim.policy_number }}</td>

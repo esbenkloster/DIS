@@ -198,14 +198,14 @@ def select_Policy_Claims(policy_number=None):
     cur.close()
     return claims
 
-def update_Claim_Status(claim_number, status):
+def update_Claim_Status(claim_id, claim_status):
     cur = conn.cursor()
     sql = """
     UPDATE claims
-    SET status = %s
-    WHERE claim_number = %s
+    SET claim_status = %s
+    WHERE claim_id = %s
     """
-    cur.execute(sql, (status, claim_number))
+    cur.execute(sql, (claim_status, claim_id))
     conn.commit()
     cur.close()
 
@@ -303,3 +303,16 @@ def select_Customers():
     customers = [Customers(row) for row in cur.fetchall()]
     cur.close()
     return customers
+
+def select_Policies_Managed_By_Employee(emp_id):
+    cur = conn.cursor()
+    sql = """
+    SELECT p.policy_number, p.policy_type, p.start_date, p.end_date, p.premium_amount, p.CPR_number
+    FROM Policies p
+    JOIN Manages m ON p.policy_number = m.policy_number
+    WHERE m.emp_id = %s
+    """
+    cur.execute(sql, (emp_id,))
+    policies = [Policy(row) for row in cur.fetchall()]
+    cur.close()
+    return policies

@@ -14,9 +14,7 @@
             <li class="list-group-item">
                 Email: <input type="email" name="email" value="{{ customer.email }}" class="form-control">
             </li>
-            <li class="list-group-item">
-                Balance: <input type="text" name="balance" value="{{ customer.balance }}" class="form-control">
-            </li>
+            <li class="list-group-item">Account Balance (USD): {{ customer.balance }}</li>
         </ul>
         <button type="submit" class="btn btn-primary mt-3">Update Details</button>
     </form>
