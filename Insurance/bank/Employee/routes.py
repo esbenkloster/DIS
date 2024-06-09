@@ -95,4 +95,61 @@ def process_claims():
         return redirect(url_for('Login.login'))
 
     claims = select_Policy_Claims(policy_number=None)
-    return render_template('claimEmp.html', title='Claims', claims=claims)
+    return render_template('process_claims.html', title='Process Claims', claims=claims, role=mysession.get("role"), current_page='process_claims')
+
+@Employee.route("/manage_policies", methods=['GET'])
+@login_required
+def manage_policies():
+    if not current_user.is_authenticated:
+        flash('Please login.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    if not mysession.get("role") == 'employee':
+        flash('Policy management is for employees only.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    employee_id = current_user.get_id()
+    policies = select_Employee_Policies(employee_id)
+    return render_template('manage_policies.html', title='Manage Policies', policies=policies, role=mysession.get("role"), current_page='manage_policies')
+
+@Employee.route("/policy_claims/<string:policy_number>", methods=['GET'])
+@login_required
+def view_policy_claims(policy_number):
+    if not current_user.is_authenticated:
+        flash('Please login.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    if not mysession.get("role") == 'employee':
+        flash('Claim view is for employees only.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    claims = select_Policy_Claims(policy_number)
+    return render_template('policy_claims.html', title='Policy Claims', claims=claims, role=mysession.get("role"), current_page='process_claims')
+
+@Employee.route("/policy_payments/<string:policy_number>", methods=['GET'])
+@login_required
+def view_policy_payments(policy_number):
+    if not current_user.is_authenticated:
+        flash('Please login.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    if not mysession.get("role") == 'employee':
+        flash('Payment view is for employees only.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    payments = select_Policy_Payments(policy_number)
+    return render_template('policy_payments.html', title='Policy Payments', payments=payments, role=mysession.get("role"), current_page='view_payments')
+
+@Employee.route("/customer/<int:cpr_number>", methods=['GET'])
+@login_required
+def view_customer(cpr_number):
+    if not current_user.is_authenticated:
+        flash('Please login.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    if not mysession.get("role") == 'employee':
+        flash('Customer view is for employees only.', 'danger')
+        return redirect(url_for('Login.login'))
+
+    customer = select_Customer(cpr_number)
+    return render_template('customer_details.html', title='Customer Details', customer=customer, role=mysession.get("role"), current_page='view_customer')

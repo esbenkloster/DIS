@@ -1,13 +1,9 @@
 from flask import render_template, url_for, flash, redirect, request, Blueprint, session
 from bank import app, conn, bcrypt
 from bank.forms import PaymentForm, ClaimForm
-from flask_login import current_user
-from bank.models import Policy, Claim, insert_Policy
-from bank.models import select_Customer_Policies, insert_Claim, select_Policy_Claims, select_cus_claims
-from bank.models import update_Claim_Status, select_cus_accounts
-
-import datetime
-
+from flask_login import current_user, login_required
+from bank.models import *
+from datetime import datetime
 from bank import roles, mysession
 
 iEmployee = 1
@@ -68,17 +64,20 @@ def payments():
         flash('Please login.', 'danger')
         return redirect(url_for('Login.login'))
 
-    form = ClaimForm()
-    if form.validate_on_submit():
-        description = form.description.data
-        amount = form.amount.data
-        policy_number = request.args.get('policy_number')
-        insert_Claim(policy_number, datetime.datetime.now(), amount, description)
-        flash('Claim submitted successfully!', 'success')
-        return redirect(url_for('Customer.claim'))
-    
-    claims = select_cus_claims(current_user.get_id())  # Fetch the customer's claims
-    return render_template('claims.html', title='Submit Claim', form=form, claims=claims)
+    try:
+        customer_id = current_user.get_id()
+        policies = select_Customer_Policies(customer_id)
+        payments = []
+        for policy in policies:
+            payments += select_Policy_Payments(policy.policy_number)
+
+        role = mysession.get("role")
+        return render_template('payments.html', title='Payments', payments=payments, role=role, current_page='payments')
+    except Exception as e:
+        flash('An error occurred while fetching payment information.', 'danger')
+        print(f"Error fetching payments info: {e}")
+        return redirect(url_for('Login.home'))
+
 
 @Customer.route("/policies", methods=['GET', 'POST'])
 @login_required

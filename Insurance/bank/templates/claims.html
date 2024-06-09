@@ -1,45 +1,90 @@
 {% extends "layout_logged_in.html" %}
 {% block page_title %}Claims{% endblock %}
 {% block content %}
-    <h1>Submit Claim</h1>
-    <form method="POST">
-        {{ form.hidden_tag() }}
-        <div class="form-group">
-            {{ form.description.label(class="form-control-label") }}
-            {{ form.description(class="form-control form-control-lg") }}
-        </div>
-        <div class="form-group">
-            {{ form.amount.label(class="form-control-label") }}
-            {{ form.amount(class="form-control form-control-lg") }}
-        </div>
-        <button type="submit" class="btn btn-primary">Submit</button>
-    </form>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h2>Overview</h2>
+        <a href="{{ url_for('Customer.file_claim') }}" class="btn btn-primary">Submit New Claim</a>
+    </div>
+    <hr> <!-- Horizontal separator -->
 
-    <h2>Your Claims</h2>
-    {% if claims %}
-        <table class="table">
-            <thead>
+    <!-- Pending Claims -->
+    <h3>Pending Claims</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Policy Number</th>
+                <th>Claim Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%  for claim in claims if claim.status == 'Pending' %}
                 <tr>
-                    <th>Policy Number</th>
-                    <th>Description</th>
-                    <th>Claim Amount</th>
-                    <th>Claim Date</th>
-                    <th>Claim Status</th>
+                    <td>{{ claim.claim_id }}</td>
+                    <td>{{ claim.policy_number }}</td>
+                    <td>{{ claim.claim_date }}</td>
+                    <td>{{ claim.amount }}</td>
+                    <td>{{ claim.status }}</td>
+                    <td>{{ claim.description }}</td>
                 </tr>
-            </thead>
-            <tbody>
-                {% for claim in claims %}
-                    <tr>
-                        <td>{{ claim[1] }}</td>
-                        <td>{{ claim[5] }}</td>
-                        <td>{{ claim[3] }}</td>
-                        <td>{{ claim[2] }}</td>
-                        <td>{{ claim[4] }}</td>
-                    </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% else %}
-        <p>No claims found.</p>
-    {% endif %}
-{% endblock %}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Approved Claims -->
+    <h3>Approved Claims</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Policy Number</th>
+                <th>Claim Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for claim in claims if claim.status == 'Approved' %}
+                <tr>
+                    <td>{{ claim.claim_id }}</td>
+                    <td>{{ claim.policy_number }}</td>
+                    <td>{{ claim.claim_date }}</td>
+                    <td>{{ claim.amount }}</td>
+                    <td>{{ claim.status }}</td>
+                    <td>{{ claim.description }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- Closed Claims -->
+    <h3>Denied Claims</h3>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Policy Number</th>
+                <th>Claim Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {%  for claim in claims if claim.status == 'Denied' %}
+                <tr>
+                    <td>{{ claim.claim_id }}</td>
+                    <td>{{ claim.policy_number }}</td>
+                    <td>{{ claim.claim_date }}</td>
+                    <td>{{ claim.amount }}</td>
+                    <td>{{ claim.status }}</td>
+                    <td>{{ claim.description }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock content %}

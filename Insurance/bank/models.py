@@ -75,11 +75,19 @@ class Claim(tuple):
     def __init__(self, claim_data):
         self.claim_id = claim_data[0]
         self.policy_number = claim_data[1]
-        self.description = claim_data[2]
+        self.claim_date = claim_data[2]
         self.amount = claim_data[3]
-        self.claim_date = claim_data[4]
-        self.status = claim_data[5]
-        
+        self.status = claim_data[4]
+        self.description = claim_data[5]
+
+class Payment(tuple):
+    def __init__(self, payment_data):
+        self.payment_id = payment_data[0]
+        self.policy_number = payment_data[1]
+        self.payment_date = payment_data[2]
+        self.amount = payment_data[3]
+        self.payment_method = payment_data[4]
+
 def insert_Customer(name, CPR_number, password, address, ):
     cur = conn.cursor()
     sql = """
@@ -162,41 +170,14 @@ def select_Customer_Policies(CPR_number):
     cur.close()
     return policies
 
-def select_cus_claims(cpr_number):
-    cur = conn.cursor()
-    
-    # Fetch the policies associated with the customer
-    sql_policies = """
-    SELECT policy_number FROM policies
-    WHERE CPR_number = %s
-    """
-    cur.execute(sql_policies, (cpr_number,))
-    policy_numbers = [row[0] for row in cur.fetchall()]
-    
-    # If no policies are found, return an empty list
-    if not policy_numbers:
-        cur.close()
-        return []
 
-    # Fetch the claims associated with the policy numbers
-    sql_claims = """
-    SELECT * FROM claims
-    WHERE policy_number = ANY(%s)
-    """
-    cur.execute(sql_claims, (policy_numbers,))
-    claims = [Claim(row) for row in cur.fetchall()]
-    
-    cur.close()
-    return claims
-
-
-def insert_Claim(policy_number, claim_date, claim_amount, claim_status='Pending'):
+def insert_Claim(policy_number, claim_date, claim_amount, claim_status='Pending', description=None):
     cur = conn.cursor()
     sql = """
-    INSERT INTO claims (policy_number, claim_date, claim_amount, claim_status)
-    VALUES (%s, %s, %s, %s)
+    INSERT INTO claims (policy_number, claim_date, claim_amount, claim_status, description)
+    VALUES (%s, %s, %s, %s, %s)
     """
-    cur.execute(sql, (policy_number, claim_date, claim_amount, claim_status))
+    cur.execute(sql, (policy_number, claim_date, claim_amount, claim_status, description))
     conn.commit()
     cur.close()
 
@@ -229,15 +210,109 @@ def update_Claim_Status(claim_id, claim_status):
     cur.close()
 
 def select_cus_accounts(cpr_number):
+    try:
+        cur = conn.cursor()
+        account_sql = """
+        SELECT
+          e.name employee
+        , c.name customer
+        , cpr_number
+        , account_number
+        FROM manages m
+          NATURAL JOIN accounts
+          NATURAL JOIN customers c
+          LEFT OUTER JOIN employees e ON m.emp_cpr_number = e.id
+        WHERE cpr_number = %s
+        ;
+        """
+        cur.execute(account_sql, (cpr_number,))
+        accounts = cur.fetchall()
+        cur.close()
+        return accounts
+    except Error as e:
+        print(f"Database error: {e}")
+        return []
+
+def select_Policy_Payments(policy_number):
     cur = conn.cursor()
     sql = """
-    SELECT * FROM accounts
-    NATURAL JOIN customers c
-    LEFT OUTER JOIN employees e ON m.emp_cpr_number = e.id
-    WHERE cpr_number = %s
-    ;
+    SELECT * FROM payments
+    WHERE policy_number = %s
     """
-    cur.execute(sql, (cpr_number,))
-    tuple_resultset = cur.fetchall()
+    cur.execute(sql, (policy_number,))
+    payments = [Payment(row) for row in cur.fetchall()]
+    cur.close()
+    return payments
+
+class Policy:
+    def __init__(self, policy_data):
+        self.policy_number = policy_data[0]
+        self.policy_type = policy_data[1]
+        self.start_date = policy_data[2]
+        self.end_date = policy_data[3]
+        self.premium_amount = policy_data[4]
+        self.CPR_number = policy_data[5]
+
+def select_All_Policy_Types():
+    cur = conn.cursor()
+    sql = """
+    SELECT DISTINCT policy_type, premium_amount
+    FROM Policies
+    """
+    cur.execute(sql)
+    policies = [Policy(row) for row in cur.fetchall()]
+    cur.close()
+    return policies
+
+def select_Policy_Details_By_Type(policy_type):
+    cur = conn.cursor()
+    sql = """
+    SELECT policy_type, premium_amount
+    FROM Policies
+    WHERE policy_type = %s
+    LIMIT 1
+    """
+    cur.execute(sql, (policy_type,))
+    policy = Policy(cur.fetchone())
+    cur.close()
+    return policy
+
+def select_available_policies(CPR_number):
+    cur = conn.cursor()
+    sql = """
+    SELECT DISTINCT policy_type, premium_amount
+    FROM policies
+    WHERE CPR_number != %s
+    AND policy_type NOT IN (
+        SELECT policy_type
+        FROM policies
+        WHERE CPR_number = %s
+    )
+    """
+    cur.execute(sql, (CPR_number, CPR_number))
+    available_policies = [row for row in cur.fetchall()]
+    cur.close()
+    return available_policies
+
+def select_Customers():
+    cur = conn.cursor()
+    sql = """
+    SELECT * FROM customers
+    """
+    cur.execute(sql)
+    customers = [Customers(row) for row in cur.fetchall()]
+    cur.close()
+    return customers
+
+def select_Policies_Managed_By_Employee(emp_id):
+    cur = conn.cursor()
+    sql = """
+    SELECT p.policy_number, p.policy_type, p.start_date, p.end_date, p.premium_amount, p.CPR_number
+    FROM Policies p
+    JOIN Manages m ON p.policy_number = m.policy_number
+    WHERE m.emp_id = %s
+    """
+    cur.execute(sql, (emp_id,))
+    policies = [Policy(row) for row in cur.fetchall()]
     cur.close()
     return policies
