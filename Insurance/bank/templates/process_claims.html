@@ -1,0 +1,38 @@
+{% extends "layout_logged_in.html" %}
+{% block page_title %}Process Claims{% endblock %}
+{% block content %}
+    <h2>Pending Claims</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Policy Number</th>
+                <th>Claim Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Description</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for claim in claims %}
+                <tr>
+                    <td>{{ claim.claim_id }}</td>
+                    <td>{{ claim.policy_number }}</td>
+                    <td>{{ claim.claim_date }}</td>
+                    <td>{{ claim.claim_amount }}</td>
+                    <td>{{ claim.claim_status }}</td>
+                    <td>{{ claim.description }}</td>
+                    <td>
+                        <form action="{{ url_for('Employee.process_claim', claim_id=claim.claim_id, status='Approved') }}" method="post">
+                            <button type="submit" class="btn btn-success">Approve</button>
+                        </form>
+                        <form action="{{ url_for('Employee.process_claim', claim_id=claim.claim_id, status='Denied') }}" method="post">
+                            <button type="submit" class="btn btn-danger">Deny</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

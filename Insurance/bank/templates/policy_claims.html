@@ -1,0 +1,29 @@
+{% extends "layout_logged_in.html" %}
+{% block page_title %}Policy Claims{% endblock %}
+{% block content %}
+<div class="content-section">
+    <h2>Policy Claims</h2>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Claim Date</th>
+                <th>Amount</th>
+                <th>Status</th>
+                <th>Description</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for claim in claims %}
+            <tr>
+                <td>{{ claim.claim_id }}</td>
+                <td>{{ claim.claim_date }}</td>
+                <td>{{ claim.claim_amount }}</td>
+                <td>{{ claim.claim_status }}</td>
+                <td>{{ claim.description }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

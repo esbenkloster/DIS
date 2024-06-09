@@ -1,6 +1,11 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, SubmitField, BooleanField, IntegerField, SelectField
-from wtforms.validators import DataRequired, Length, EqualTo, ValidationError
+from wtforms.validators import DataRequired, Length, EqualTo, ValidationError, Email
+
+## maybe add external validation
+class ForgotPasswordForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired()])
+    submit = SubmitField('Request Password Reset')
 
 class AddCustomerForm(FlaskForm):
     username = StringField('Username',
@@ -22,7 +27,7 @@ class CustomerLoginForm(FlaskForm):
     submit = SubmitField('Login')
 
 class EmployeeLoginForm(FlaskForm):
-    id = IntegerField('ID', validators=[DataRequired()])
+    id = IntegerField('Employee ID', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     remember = BooleanField('Remember Me')
     submit = SubmitField('Login')

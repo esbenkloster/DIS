@@ -10,7 +10,6 @@
 
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
 
-
     {% if title %}
         <title>DIS Insurance - {{ title }}</title>
     {% else %}
@@ -19,7 +18,7 @@
 </head>
 <body>
     <header class="site-header">
-      <nav class="navbar navbar-expand-md navbar-dark bg-dark fixed-top">
+      <nav class="navbar navbar-expand-md navbar-dark bg-steel fixed-top">
         <div class="container">
           <span class="navbar-brand mr-4">DIS Insurance</span>
           <div class="nav-separator"></div>
@@ -28,51 +27,15 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarToggle">
             <div class="navbar-nav mr-auto">
-              {% if current_user.is_authenticated %}
-                <!-- Home link for authenticated users -->
-                <a class="nav-item nav-link{% if current_page == 'home' %} active{% endif %}" href="{{ url_for('Login.home') }}">Home</a>
-                <!-- Menu for authenticated users -->
-                <li class="dropdown">
-                 <a href="#" class="nav-item nav-link dropdown-toggle" data-toggle="dropdown">Insurrance DIS<b class="caret"></b></a>
-                 <ul class="dropdown-menu">
-                    <li><a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Account</a></li>
-                    <li><a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Claims</a></li>
-                    <li class="divider"></li>
-                    <li><a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View policies</a></li>
-                 </ul>
-               </li>
-                <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
-              {% else %}
-                <a class="nav-item nav-link{% if current_page == 'login' %} active{% endif %}" href="{{ url_for('Login.login') }}">Login</a>
-                <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
-              {% endif %}
-            </div>
-            <!-- Navbar Right Side -->
-            <div class="navbar-nav">
-              {% if current_user.is_authenticated %}
-                <a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Account</a>
-			          {% if "customer" == role %}
-                <a class="nav-item nav-link" href="{{ url_for('Customer.claim') }}">Claims</a>
-                <a class="nav-item nav-link" href="{{ url_for('Customer.view_policies') }}">View Policies</a>
- 			          {% endif %}
-		            {% if role == 'employee' %}
-                <a class="nav-item nav-link" href="{{ url_for('Employee.view_claims') }}">Insurrance claims</a>
-
- 			          {% endif %}
-
-                <a class="nav-item nav-link" href="{{ url_for('Login.logout') }}">Logout</a>
-              {% else %}
-                <a class="nav-item nav-link" href="{{ url_for('Login.login') }}">Login</a>
-              {% endif %}
+              <a class="nav-item nav-link{% if current_page == 'login' %} active{% endif %}" href="{{ url_for('Login.login') }}">Login</a>
+              <a class="nav-item nav-link{% if current_page == 'about' %} active{% endif %}" href="{{ url_for('Login.about') }}">About us</a>
             </div>
           </div>
         </div>
       </nav>
     </header>
     <main role="main" class="container">
-
-      
-      <div class="row">
+      <div class="row justify-content-center">
         <div class="col-md-8">
           {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}

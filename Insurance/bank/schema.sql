@@ -7,8 +7,8 @@ CREATE TABLE IF NOT EXISTS Customers(
     name varchar(60),
     address text,
     phone_number varchar(15),
-    email varchar(100)
-    CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$')
+    email varchar(100) CHECK (email ~* '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}$'),
+    balance DECIMAL(10, 2)
 );
 
 CREATE TABLE IF NOT EXISTS Employees(

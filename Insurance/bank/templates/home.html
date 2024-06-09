@@ -1,5 +1,7 @@
 {% extends "layout.html" %}
 
+{% extends "layout_logged_in.html" %}
+{% block page_title %}Home{% endblock %}
 {% block content %}
 <div class="text-center">
     <h1>{{ current_user.name }}</h1>
@@ -34,3 +36,70 @@
     </div>
 </div>
 {% endblock content %}
+    <h2>Welcome, {{ customer.name }}!</h2>
+    <hr>
+    <div class="row">
+        <!-- Account Balance -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Current Account Balance</h5>
+                    <p class="card-text">${{ customer.balance }}</p>
+                </div>
+            </div>
+        </div>
+        <!-- Recent Payments -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Payments</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for payment in recent_payments %}
+                            <li class="list-group-item">
+                                <strong>Date:</strong> {{ payment.payment_date }}<br>
+                                <strong>Amount:</strong> ${{ payment.amount }}<br>
+                                <strong>Method:</strong> {{ payment.payment_method }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <!-- Active Policies -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Active Policies</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for policy in active_policies %}
+                            <li class="list-group-item">
+                                <strong>Policy Number:</strong> {{ policy.policy_number }}<br>
+                                <strong>Type:</strong> {{ policy.policy_type }}<br>
+                                <strong>End Date:</strong> {{ policy.end_date }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!-- Recent Claims -->
+        <div class="col-md-6">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h5 class="card-title">Recent Claims</h5>
+                    <ul class="list-group list-group-flush">
+                        {% for claim in recent_claims %}
+                            <li class="list-group-item">
+                                <strong>Claim ID:</strong> {{ claim.claim_id }}<br>
+                                <strong>Status:</strong> {{ claim.claim_status }}<br>
+                                <strong>Date:</strong> {{ claim.claim_date }}
+                            </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

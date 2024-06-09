@@ -1,27 +1,33 @@
 from datetime import datetime
 from bank import conn, login_manager
 from flask_login import UserMixin
-from psycopg2 import sql
+from psycopg2 import sql, Error
 
 @login_manager.user_loader
 def load_user(user_id):
-    cur = conn.cursor()
+    try:
+        cur = conn.cursor()
+        schema = 'customers'
+        id = 'cpr_number'
+        if str(user_id).startswith('60'):
+            schema = 'employees'
+            id = 'id'
 
-    schema = 'customers'
-    id = 'cpr_number'
-    if str(user_id).startswith('60'):
-        schema = 'employees'
-        id = 'id'
+        user_sql = sql.SQL("""
+        SELECT * FROM {}
+        WHERE {} = %s
+        """).format(sql.Identifier(schema),  sql.Identifier(id))
 
-    user_sql = sql.SQL("""
-    SELECT * FROM {}
-    WHERE {} = %s
-    """).format(sql.Identifier(schema),  sql.Identifier(id))
-
-    cur.execute(user_sql, (int(user_id),))
-    if cur.rowcount > 0:
-        return Employees(cur.fetchone()) if schema == 'employees' else Customers(cur.fetchone())
-    else:
+        cur.execute(user_sql, (int(user_id),))
+        if cur.rowcount > 0:
+            user_data = cur.fetchone()
+            cur.close()
+            return Employees(user_data) if schema == 'employees' else Customers(user_data)
+        else:
+            cur.close()
+            return None
+    except Error as e:
+        print(f"Database error: {e}")
         return None
 
 class Customers(tuple, UserMixin):
@@ -33,6 +39,7 @@ class Customers(tuple, UserMixin):
         self.address = user_data[4]
         self.phone_number = user_data[5]
         self.email = user_data[6]
+        self.balance = user_data[7]
         self.role = "customer"
 
     def get_id(self):
@@ -49,14 +56,20 @@ class Employees(tuple, UserMixin):
     def get_id(self):
         return self.id
 
-class Policy(tuple):
+class Policy:
     def __init__(self, policy_data):
-        self.policy_number = policy_data[0]
-        self.policy_type = policy_data[1]
-        self.start_date = policy_data[2]
-        self.end_date = policy_data[3]
-        self.premium_amount = policy_data[4]
-        self.CPR_number = policy_data[5]
+        if len(policy_data) == 6:
+            self.policy_number = policy_data[0]
+            self.policy_type = policy_data[1]
+            self.start_date = policy_data[2]
+            self.end_date = policy_data[3]
+            self.premium_amount = policy_data[4]
+            self.CPR_number = policy_data[5]
+        elif len(policy_data) == 2:
+            self.policy_type = policy_data[0]
+            self.premium_amount = policy_data[1]
+        else:
+            raise ValueError("Invalid policy data")
 
 class Claim(tuple):
     def __init__(self, claim_data):
@@ -140,7 +153,8 @@ def insert_Policy(CPR_number, policy_type, premium, coverage, created_date=datet
 def select_Customer_Policies(CPR_number):
     cur = conn.cursor()
     sql = """
-    SELECT * FROM policies
+    SELECT policy_number, policy_type, start_date, end_date, premium_amount, CPR_number
+    FROM policies
     WHERE CPR_number = %s
     """
     cur.execute(sql, (CPR_number,))
@@ -203,14 +217,14 @@ def select_Policy_Claims(policy_number=None):
     cur.close()
     return claims
 
-def update_Claim_Status(claim_number, status):
+def update_Claim_Status(claim_id, claim_status):
     cur = conn.cursor()
     sql = """
     UPDATE claims
-    SET status = %s
-    WHERE claim_number = %s
+    SET claim_status = %s
+    WHERE claim_id = %s
     """
-    cur.execute(sql, (status, claim_number))
+    cur.execute(sql, (claim_status, claim_id))
     conn.commit()
     cur.close()
 
@@ -226,4 +240,4 @@ def select_cus_accounts(cpr_number):
     cur.execute(sql, (cpr_number,))
     tuple_resultset = cur.fetchall()
     cur.close()
-    return tuple_resultset
+    return policies

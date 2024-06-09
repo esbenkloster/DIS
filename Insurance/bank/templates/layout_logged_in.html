@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+    {% if title %}
+        <title>DIS Insurance - {{ title }}</title>
+    {% else %}
+        <title>DIS Insurance</title>
+    {% endif %}
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row justify-content-center">
+            <div class="col-10 main-content">
+                <div class="row">
+                    <!-- Left Side box-->
+                    <div class="col-md-3 left-side-menu sidebar">
+                        <h3 class="logo">DIS Insurance</h3>
+                        <ul class="list-group">
+                            <li class="list-group-item{% if current_page == 'home' %} active{% endif %}"><a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Home</a></li>
+                            <li class="list-group-item{% if current_page == 'account' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Login.account') }}">My Account</a></li>
+
+                            {% if role == 'customer' %}
+                                <li class="list-group-item{% if current_page == 'policies' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.view_policies') }}">Manage Policies</a></li>
+                                <li class="list-group-item{% if current_page == 'claims' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.claims') }}">Manage Claims</a></li>
+                                <li class="list-group-item{% if current_page == 'payments' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.payments') }}">View Payment History</a></li>
+                            {% elif role == 'employee' %}
+                                <li class="list-group-item{% if current_page == 'manage_customers' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Employee.manage_customers') }}">Manage Customers</a></li>
+                                <li class="list-group-item{% if current_page == 'process_claims' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Employee.process_claims') }}">Process Claims</a></li>
+                            {% endif %}
+                            
+                            <li class="list-group-item{% if current_page == 'about' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Login.about') }}">About Us</a></li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="dashboard-header">
+                            <h3>Dashboard | {% block page_title %}{% endblock %}</h3>
+                        </div>
+                        <div class="content-section">
+                            {% block content %}{% endblock %}
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <!-- Account Details Box -->
+                        <div class="account-details-box">
+                            <h4>Account Details</h4>
+                            <hr> <!-- Horizontal separator -->
+                            <p><strong>Email:</strong> john.doe@example.com</p>
+                            <p><strong>Name:</strong> John Doe</p>
+                            <p><strong>Address:</strong> 123 Elm St</p>
+                            <!-- Log Out button inside account details box -->
+                            <a href="{{ url_for('Login.logout') }}" class="btn btn-danger btn-logout">Log Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9Q+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</body>
+</html>
