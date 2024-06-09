@@ -61,11 +61,15 @@ def home():
         # Fetch active policies
         active_policies = [policy for policy in policies if policy.end_date > datetime.now().date()]
 
-        return render_template('home.html', title='Home', customer=customer, recent_claims=recent_claims, recent_payments=recent_payments, active_policies=active_policies, current_page='home')
+        # Get role from session
+        role = mysession.get("role") 
+
+        return render_template('home.html', title='Home', customer=customer, recent_claims=recent_claims, recent_payments=recent_payments, active_policies=active_policies, role=role, current_page='home')
     except Exception as e:
         flash('An error occurred while fetching home page information.', 'danger')
         print(f"Error fetching home page info: {e}")
         return redirect(url_for('Login.home'))
+
 
 
 @Login.route("/account")
@@ -101,7 +105,10 @@ def account():
 def about():
     mysession["state"] = "about"
     print(mysession)
-    return render_template('about.html', title='About', current_page='about')
+
+    role = mysession.get("role")
+
+    return render_template('about.html', title='About', role=role, current_page='about')
 
 @Login.route("/direct", methods=['GET', 'POST'])
 def direct():
@@ -150,10 +157,6 @@ def direct():
 
 @Login.route("/login", methods=['GET', 'POST'])
 def login():
-    session["state"] = "login"
-    print(session)
-    role = None
-
     if current_user.is_authenticated:
         return redirect(url_for('Login.home'))
 
@@ -163,20 +166,13 @@ def login():
     if form.validate_on_submit():
         user = select_Employee(form.id.data) if is_employee else select_Customer(form.id.data)
 
-        if user is not None and user[2] == form.password.data:
-            print("role:" + user.role)
-            if user.role == 'employee':
-                session["role"] = roles[1]  # employee
-            elif user.role == 'customer':
-                session["role"] = roles[2]  # customer
+        if user and user.password == form.password.data:
+            if is_employee:
+                mysession["role"] = 'employee'
             else:
-                session["role"] = roles[0]  # ingen
+                mysession["role"] = 'customer'
 
-            session["id"] = form.id.data
-            session["state"] = "account"  # Set state to account after successful login
-            print(session)
-            print(roles)
-
+            mysession["id"] = form.id.data
             login_user(user, remember=form.remember.data)
             flash('Login successful.', 'success')
             next_page = request.args.get('next')
@@ -184,7 +180,9 @@ def login():
         else:
             flash('Login Unsuccessful. Please check identifier and password', 'danger')
 
-    return render_template('login.html', title='Login', is_employee=is_employee, form=form, role=role, current_page='login')
+    return render_template('login.html', title='Login', is_employee=is_employee, form=form)
+
+
 
 
 

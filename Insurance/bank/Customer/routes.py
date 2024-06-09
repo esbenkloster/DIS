@@ -1,4 +1,4 @@
-from flask import render_template, url_for, flash, redirect, request, Blueprint
+from flask import render_template, url_for, flash, redirect, request, Blueprint, session
 from bank import app, conn, bcrypt
 from bank.forms import PaymentForm, ClaimForm
 from flask_login import current_user, login_required
@@ -25,7 +25,9 @@ def claims():
         for policy in policies:
             claims += select_Policy_Claims(policy.policy_number)
 
-        return render_template('claims.html', title='Claims', claims=claims, current_page='claims')
+        role = mysession.get("role")
+
+        return render_template('claims.html', title='Claims', claims=claims, role=role, current_page='claims')
     except Exception as e:
         flash('An error occurred while fetching claims information.', 'danger')
         print(f"Error fetching claims info: {e}")
@@ -69,7 +71,8 @@ def payments():
         for policy in policies:
             payments += select_Policy_Payments(policy.policy_number)
 
-        return render_template('payments.html', title='Payments', payments=payments, current_page='payments')
+        role = mysession.get("role")
+        return render_template('payments.html', title='Payments', payments=payments, role=role, current_page='payments')
     except Exception as e:
         flash('An error occurred while fetching payment information.', 'danger')
         print(f"Error fetching payments info: {e}")
@@ -89,7 +92,10 @@ def view_policies():
         print(f"Policies: {policies}")
         available_policies = select_available_policies(customer_id)
         print(f"Available Policies: {available_policies}")
-        return render_template('policies.html', title='My Policies', policies=policies, available_policies=available_policies, current_page='policies')
+        
+        role = mysession.get("role")
+
+        return render_template('policies.html', title='My Policies', policies=policies, available_policies=available_policies, role=role, current_page='policies')
     except Exception as e:
         flash('An error occurred while fetching policies information.', 'danger')
         print(f"Error fetching policies info: {e}")

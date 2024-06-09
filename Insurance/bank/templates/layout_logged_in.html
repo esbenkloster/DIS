@@ -27,9 +27,16 @@
                         <ul class="list-group">
                             <li class="list-group-item{% if current_page == 'home' %} active{% endif %}"><a class="nav-item nav-link" href="{{ url_for('Login.home') }}">Home</a></li>
                             <li class="list-group-item{% if current_page == 'account' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Login.account') }}">My Account</a></li>
-                            <li class="list-group-item{% if current_page == 'policies' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.view_policies') }}">Manage Policies</a></li>
-                            <li class="list-group-item{% if current_page == 'claims' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.claims') }}">Manage Claims</a></li>
-                            <li class="list-group-item{% if current_page == 'payments' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.payments') }}">View Payment History</a></li>
+
+                            {% if role == 'customer' %}
+                                <li class="list-group-item{% if current_page == 'policies' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.view_policies') }}">Manage Policies</a></li>
+                                <li class="list-group-item{% if current_page == 'claims' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.claims') }}">Manage Claims</a></li>
+                                <li class="list-group-item{% if current_page == 'payments' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Customer.payments') }}">View Payment History</a></li>
+                            {% elif role == 'employee' %}
+                                <li class="list-group-item{% if current_page == 'manage_customers' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Employee.manage_customers') }}">Manage Customers</a></li>
+                                <li class="list-group-item{% if current_page == 'process_claims' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Employee.process_claims') }}">Process Claims</a></li>
+                            {% endif %}
+                            
                             <li class="list-group-item{% if current_page == 'about' %} active{% endif %}"><a class="nav-link" href="{{ url_for('Login.about') }}">About Us</a></li>
                         </ul>
                     </div>
