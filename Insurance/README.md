@@ -1,6 +1,6 @@
 ## ABBOUT the assignment
-The DIS_insurrance applikation is built on the Bank applikation given for the course DIS. It has been transformed to a Insurrance site were as an customer you can see the claims already in the database, the same with your policies. As a employee you can see the polices the insurrance company offers. The data base is an artifficial one, we have created for this task, so it resembelse, the bank data base to some deegree, but now it have all the neccesary features to work and act as an insurrance application. 
-The Regex match, that was mandatory is in the schema.sql and is used to make sure that when a customer is created, that their email adress is on a correct form.    
+The DIS_insurrance applikation is built on the Bank applikation given for the course DIS. It has been transformed to a Insurrance site were as an customer you can see the claims already in the database, the same with your policies. As a employee you can see the polices the insurrance company offers. In general the focus has been on the customer part of the applikation. The data base is an artifficial one, we have created for this task, so it resembelse the bank data base to some deegree, but now it have all the neccesary features to work and act as an insurrance application. 
+The Regex match that was mandatory, is in the schema.sql and is used to make sure that when a customer is created, that their email adress is on a correct form.    
 
     git repository:  https://github.com/esbenkloster/DIS
 
