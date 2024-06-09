@@ -3,7 +3,7 @@ from bank import app, conn, bcrypt
 from bank.forms import PaymentForm, ClaimForm
 from flask_login import current_user, login_required
 from bank.models import *
-import datetime
+from datetime import datetime
 from bank import roles, mysession
 
 iEmployee = 1
@@ -41,11 +41,11 @@ def file_claim():
     if request.method == 'POST':
         policy_number = request.form['policy_number']
         claim_date = datetime.now()
-        amount = request.form['amount']
+        claim_amount = request.form['claim_amount']
         description = request.form['description']
 
         try:
-            insert_Claim(policy_number, claim_date, amount, description)
+            insert_Claim(policy_number, claim_date, claim_amount, 'Pending', description)
             flash('Claim filed successfully!', 'success')
             return redirect(url_for('Customer.claims'))
         except Exception as e:

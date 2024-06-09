@@ -171,13 +171,13 @@ def select_Customer_Policies(CPR_number):
     return policies
 
 
-def insert_Claim(policy_number, claim_date, amount, status='Pending'):
+def insert_Claim(policy_number, claim_date, claim_amount, claim_status='Pending', description=None):
     cur = conn.cursor()
     sql = """
-    INSERT INTO claims (policy_number, claim_date, amount, status)
-    VALUES (%s, %s, %s, %s)
+    INSERT INTO claims (policy_number, claim_date, claim_amount, claim_status, description)
+    VALUES (%s, %s, %s, %s, %s)
     """
-    cur.execute(sql, (policy_number, claim_date, amount, status))
+    cur.execute(sql, (policy_number, claim_date, claim_amount, claim_status, description))
     conn.commit()
     cur.close()
 
